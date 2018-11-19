@@ -1,53 +1,59 @@
+const sqlite3 = require('sqlite3').verbose();  
+
 class Connector {
-    /**
-     * Gets entity
-     * 
-     * @param String sql `UPDATE table SET column = ?, ...`
-     * @param Array data `['value']`
-     * @param Function err 
-     */
-    static select(sql, data, err = (e, row) => {
-        if (e) console.error(e.message)
-        console.log(`select data: ${row}`);
-    }) {
-        Connect.db.run(sql, data, err);
+    constructor(db) {
+        this.db = new sqlite3.Database(db);
+    }
+
+    get(sql, params = []) {
+        return new Promise((res, rej) => {
+            this.db.get(sql, params, function (err, result) {
+                if (err) {
+                    rej(Connector.handlePromiseError(sql, err));
+                } else {
+                    res(result)
+                }
+            })
+        })
+    }
+    
+    all(sql, params = []) {
+        return new Promise((res, rej) => {
+            this.db.all(sql, params, function (err, rows) {
+                if (err) {
+                    rej(Connector.handlePromiseError(sql, err));
+                } else {
+                    res({rows, db: this.db})
+                }
+            })
+        })
     }
 
     /**
-     * Updates entity
+     * Execute task
      * 
-     * @param String sql `UPDATE table SET column = ?, ...`
+     * @param String sql `INSERT or UPDATE or DELETE`
      * @param Array data `['value']`
-     * @param Function err 
      */
-    static update(sql, data, err = e => {
-        if (e) console.error(e.message)
-        console.log(`row(s) updated: ${this.changes}`);
-    }) {
-        Connect.db.run(sql, data, err);
+    execute(sql, params = []) {
+        return new Promise((res, rej) => {
+            this.db.run(sql, params, function (err) {
+                if (err) {
+                    rej(Connector.handlePromiseError(sql, err));
+                } else {
+                    res({ id: this.lastID })
+                }
+            });
+        });
     }
 
-    /**
-     * Inserts entity
-     * 
-     * @param String sql `INSERT INTO table VALUES (?, ...)`
-     * @param Array data `['value']`
-     * @param Function err 
-     */
-    static insert(sql, data, err = e => {
-        if (e) console.error(e.message)
-        console.log(`a row has been inserted with rowid ${this.lastID}`);
-    }) {
-        Connect.db.run(sql, data, err);
-        return this.lastID;
+    static handlePromiseError(sql, error) {
+        return new Error(`${error.message}\nError has occurred running sql ${sql}`)
     }
 
-    static close() {
-        Connect.db.close();
+    close() {
+        this.db.close();
     }
 }
-
-Connect.sqlite3 = require('sqlite3').verbose();
-Connect.db = new Connect.sqlite3.Database('./olympic_history.db');
 
 module.exports = Connector;
