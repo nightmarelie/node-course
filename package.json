@@ -1,0 +1,22 @@
+{
+  "name": "course_1",
+  "version": "1.0.0",
+  "description": "First task. The main aim of his task is to import csv data to database lite",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com"
+  },
+  "author": "Aleksey Kryvtsov <nightmarelie@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "sqlite3": "^4.0.4"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-plugin-node": "^8.0.0"
+  }
+}
