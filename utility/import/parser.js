@@ -33,9 +33,7 @@ class Parser {
         return {
             row: Parser.row,
             data: Parser.column.map((el, i) => ({[el]: this.data[i]}))
-                .reduce((current, next) => {
-                    return { ...current, ...next};
-                }, {})
+                               .reduce((current, next) => ({ ...current, ...next}), {})
         };
     }
 }

@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3').verbose();  
+const sqlite3 = require('sqlite3').verbose();
 
 class Connector {
     constructor(db) {
@@ -46,8 +46,8 @@ class Connector {
                     } else {
                         res({ id: this.lastID })
                     }
-                });
-            // });
+                // });
+            });
         });
     }
 

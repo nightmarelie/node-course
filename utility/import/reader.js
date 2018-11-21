@@ -1,7 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 
-module.exports = function (file, splitter, parser) {
+module.exports = function (file, splitter, parser, importer) {
     let result = [];
     let rd = readline.createInterface({
         input: fs.createReadStream(file),
@@ -14,8 +14,7 @@ module.exports = function (file, splitter, parser) {
             let obj = new parser(arr).build();
             
             if (obj !== undefined) {
-                
-
+                importer.import(obj);
                 result.push(obj);
             }
         });

@@ -1,4 +1,4 @@
-class Athlete extends Base {
+class Athlete extends require('../common/base.js') {
     constructor(id, fullName, yearOfBirth, sex, params, team) {
         super(id);
         this.fullName = fullName;
@@ -8,3 +8,10 @@ class Athlete extends Base {
         this.team = team;
     }
 }
+
+Athlete.sexEnum = {
+    "M": 0,
+    "F": 1 
+};
+
+module.exports = Athlete;
