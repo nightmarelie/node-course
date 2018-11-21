@@ -32,18 +32,6 @@ class Athletes extends require('../common/entities.js') {
             'INSERT INTO athletes (full_name, year_of_birth, sex, params, team_id) VALUES (?, ?, ?, ?, ?)',
             [name, yearOfBirth, sexEnum, JSON.stringify(params), team.id])
     }
-
-    // get(id) {
-    //     return this.connect.all(
-    //       `SELECT * FROM tasks WHERE id = ?`,
-    //       [id])
-    // }
-
-    // getById(id) {
-        // return this.connect.get(
-            // `SELECT * FROM tasks WHERE id = ?`, 
-            // [id])
-    // }
 }
 
 module.exports = function (connect) {

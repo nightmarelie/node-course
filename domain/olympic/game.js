@@ -8,6 +8,6 @@ class Game extends Base {
 }
 
 Game.seasonEnum = {
-    0: "Summer",
-    1: "Winter"
+    "Summer": 0,
+    "Winter": 1
 };
