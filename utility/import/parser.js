@@ -32,8 +32,10 @@ class Parser {
         if (Parser.row == 0) return;
         return {
             row: Parser.row,
-            column: Parser.column,
-            data: this.data, 
+            data: Parser.column.map((el, i) => ({[el]: this.data[i]}))
+                .reduce((current, next) => {
+                    return { ...current, ...next};
+                }, {})
         };
     }
 }

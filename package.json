@@ -1,14 +1,14 @@
 {
-  "name": "course_1",
+  "name": "course-1",
   "version": "1.0.0",
-  "description": "First task. The main aim of his task is to import csv data to database lite",
+  "description": "First task",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com"
+    "url": "https://github.com/nightmarelie"
   },
   "author": "Aleksey Kryvtsov <nightmarelie@gmail.com>",
   "license": "ISC",

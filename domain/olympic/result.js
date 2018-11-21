@@ -8,3 +8,10 @@ class Result extends Base {
         this.modal = modal;
     }
 }
+
+Result.medalEnum = {
+    0: "N/A",
+    1: "Gold",
+    2: "Silver",
+    3: "Bronze"
+}

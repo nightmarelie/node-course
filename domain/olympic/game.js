@@ -6,3 +6,8 @@ class Game extends Base {
         this.city = city;
     }
 }
+
+Game.seasonEnum = {
+    0: "Summer",
+    1: "Winter"
+};
