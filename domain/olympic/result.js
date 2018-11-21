@@ -1,5 +1,5 @@
-class Result extends Base {
-    constructor(id, athlete, game, sport, event, modal) {
+class Result extends require('../common/base.js') {
+    constructor(id, athlete, game, sport, event, medal) {
         super(id);
         this.athlete = athlete;
         this.game = game;
@@ -10,8 +10,10 @@ class Result extends Base {
 }
 
 Result.medalEnum = {
-    "N/A": 0,
+    "NA": 0,
     "Gold": 1,
     "Silver": 2,
     "Bronze": 3
 }
+
+module.exports = Result;

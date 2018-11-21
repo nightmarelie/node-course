@@ -15,7 +15,7 @@ class Athletes extends require('../common/entities.js') {
 
     createTeam(...args) {
         return this.connect.execute(
-            'INSERT INTO teams (name, noc_name) VALUES (?, ?)',
+            'INSERT OR IGNORE INTO teams (name, noc_name) VALUES (?, ?)',
             args)
     }
 

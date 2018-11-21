@@ -7,8 +7,8 @@ const olympics = require('./domain/olympic/olympics.js')(connect);
 
 const importer = require('./utility/import/importer.js')(athletes, olympics);
 
+console.time();
 reader("./import/test_events.csv", ",", parser, importer)
-    .then(result => console.log(result))
-    .catch(e => console.error(e));
-
-    
+    .then(result => console.log(result.length))
+    .catch(e => console.error(e))
+    .then(() => console.timeEnd());
