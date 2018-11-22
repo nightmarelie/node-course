@@ -32,6 +32,28 @@ class Athletes extends require('../common/entities.js') {
             'INSERT INTO athletes (full_name, year_of_birth, sex, params, team_id) VALUES (?, ?, ?, ?, ?)',
             [name, yearOfBirth, sexEnum, JSON.stringify(params), team.id])
     }
+
+    findAmountOfMedalsBySeasonAndNOC(season, noc) {
+        return Promise.resolve({
+            max: 50,
+            column: [
+                "NOC", "Amount"
+            ],
+            data: [
+                ["USA", 50],
+                ["RUS", 30], 
+                ["USA", 5], 
+                ["RUS", 3], 
+                ["RUS", 2], 
+                ["RUS", 25], 
+                ["UGA", 10]
+            ]
+        });
+    }
+
+    findAmountOfMedalsBySeasonAndNOCAndMedal() {
+        
+    }
 }
 
 module.exports = function (connect) {

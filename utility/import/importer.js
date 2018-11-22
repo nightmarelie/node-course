@@ -10,15 +10,13 @@ class Importer {
         // aggregates data for result
         this.result[row] = Object.assign(previous || {}, obj);
         // moving on
-        // return Promise.resolve(true);
     }
 
     import(obj) {
         const data = obj.data;
         const row = obj.row;
 
-        this.athletes.findTeamByNOC(data.noc)
-            .then(team => !team ? this.athletes.createTeam(data.team, data.noc) : Promise.resolve(team))
+        this.athletes.createTeam(data.team, data.noc)
             .then(team => {
                 let year = parseInt(data.year);
                 let age = parseInt(data.age);

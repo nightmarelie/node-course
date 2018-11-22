@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+const arguments = process.argv.slice(2);
+const connect = require('../db/connect.js')('./db/olympic_history.db');
+const athletes = require('../domain/athlete/athletes.js')(connect);
+const analyzer = new require("../utility/chart/analyzer.js")(athletes);
+
+//1. stats medals season[Summer|Winter] noc medal[Gold|Silver|Bronze]
+(function (args) {
+    analyzer.analyze(args)
+        .then(a => a.getChart())
+        .then(chart => chart.draw())
+        .catch(e => console.log(e.message));
+})(arguments);
