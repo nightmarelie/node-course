@@ -1,14 +1,13 @@
+const db = 'olympic_history.db';
+const csv = 'athlete_events.csv'; // test_events|athlete_events
+
 const reader = require('./utility/import/reader.js');
 const parser = require('./utility/import/parser.js');
-
-const connect = require('./db/connect.js')('./db/olympic_history.db');
-const athletes = require('./domain/athlete/athletes.js')(connect);
-const olympics = require('./domain/olympic/olympics.js')(connect);
-
-const importer = require('./utility/import/importer.js')(athletes, olympics);
+const connect = require('./db/connect.js')(`./db/${db}`);
+const importer = require('./utility/import/importer.js')(connect);
 
 console.time("Read time");
-reader("./import/test_events.csv", /(,)(?=(?:[^"]|"[^"]*")*$)/, parser, importer)
-    .then(result => console.log(result.length))
-    .catch(e => console.error(e))
+reader(`./import/${csv}`, /(,)(?=(?:[^"]|"[^"]*")*$)/, parser)
+    .then(data => importer.importData(data))
+    .catch(console.error)
     .then(() => console.timeEnd("Read time"));
