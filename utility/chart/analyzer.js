@@ -1,29 +1,34 @@
+const Medals = require('./medals.js').Medals;
+const TopTeams = require('./top-teams.js').TopTeams;
+
 class Analyzer {
     constructor (provider) {
         this.provider = provider;
-        this.chart = 'chart';
         this.data = [];
     }
 
     analyze(data) {
         return new Promise((res, rej) => {
-            console.log(data);
-            //TODO: calculate chart
-            this.chart = 'medals';
-    
-            return res(this);
+            for (const item of data) {
+                console.log(item);
+                if (Analyzer.support.includes(item)) {
+                    return res(item);
+                }
+            }
+            
+            return rej(new Error(`Please specify correct chart name. There are: ${Analyzer.support.join(', ')}`));
         });
     }
 
-    getChart() {
+    initChart(chartName) {
         return new Promise((res, rej) => {
-            if (this.chart !== undefined) {
+            if (chartName !== undefined) {
                 let requireChart;
                 try {
-                    requireChart = require(`./${this.chart}.js`);
+                    requireChart = require(`./${chartName}.js`).chart;
                     res(new requireChart(this.data, this.provider));
                 } catch(e) {
-                    rej(new Error("Chart name isn't exist"));
+                    rej(e);
                 } 
             }
             rej(new Error("Chart name isn't provided"));
@@ -32,8 +37,8 @@ class Analyzer {
 }
 
 Analyzer.support = [
-    "medals",
-    "top-teams"
+    Medals.chartName,
+    TopTeams.chartName
 ];
 
 module.exports = function (provider) {

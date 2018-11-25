@@ -36,13 +36,17 @@ class Medals extends Chart {
     }
 }
 
-Medals.indent = 3
+Medals.chartName = 'medals';
+Medals.indent = 3;
 Medals.rule = {
     medal: Result.medalEnum,
     season: Game.seasonEnum,
     noc: ''
 };
 
-module.exports = function (args, provider) {
-    return new Medals(args, provider);
+module.exports = {
+    chart: function (args, provider) {
+        return new Medals(args, provider);
+    },
+    Medals: Medals,
 }
