@@ -1,5 +1,5 @@
 const db = 'olympic_history.db';
-const csv = 'test_events.csv'; // test_events|athlete_events
+const csv = 'athlete_events.csv'; // test_events|athlete_events
 
 const reader = require('./utility/import/reader.js');
 const parser = require('./utility/import/parser.js');

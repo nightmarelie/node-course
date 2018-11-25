@@ -27,7 +27,7 @@ class Athletes extends require('../common/entities.js') {
                 JOIN games g ON g.id = r.athlete_id 
             WHERE g.season = ? 
                 AND t.noc_name = ?
-                ${medal !== undefined ? ' AND r.medal = ?' : ' AND r.medal <> 0'}
+                ${medal !== undefined ? ' AND r.medal = ?' : ' '}
             GROUP BY g.year, g.season
             ORDER BY g.year`,
             [season, noc, medal])
@@ -42,7 +42,7 @@ class Athletes extends require('../common/entities.js') {
                 JOIN games g ON g.id = r.athlete_id 
             WHERE g.season = $_season
                 ${year !== undefined ? ' AND g.year = $_year' : ' '}
-                ${medal !== undefined ? ' AND r.medal = $_medal' : ' AND r.medal <> 0'}
+                ${medal !== undefined ? ' AND r.medal = $_medal' : ' '}
             GROUP BY t.noc_name
             HAVING Amount > 25
             ORDER BY amount DESC`,
