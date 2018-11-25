@@ -4,13 +4,11 @@ const TopTeams = require('./top-teams.js').TopTeams;
 class Analyzer {
     constructor (provider) {
         this.provider = provider;
-        this.data = [];
     }
 
     analyze(data) {
         return new Promise((res, rej) => {
             for (const item of data) {
-                console.log(item);
                 if (Analyzer.support.includes(item)) {
                     return res(item);
                 }
@@ -26,7 +24,7 @@ class Analyzer {
                 let requireChart;
                 try {
                     requireChart = require(`./${chartName}.js`).chart;
-                    res(new requireChart(this.data, this.provider));
+                    res(new requireChart(this.provider));
                 } catch(e) {
                     rej(e);
                 } 

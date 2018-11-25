@@ -5,23 +5,9 @@ class Athletes extends require('../common/entities.js') {
         super(connect);
     }
 
-    findOrExecute(name, noc) {
-        return this.connect.getOrExecute(
-            'SELECT * FROM teams WHERE noc_name = ?',
-            [noc],
-            'INSERT INTO teams (name, noc_name) VALUES (?, ?)',
-            [name, noc]);
-    }
-
     createTeam(...args) {
         return this.connect.execute(
             'INSERT OR IGNORE INTO teams (name, noc_name) VALUES (?, ?)',
-            args)
-    }
-
-    findTeamByNOC(...args) {
-        return this.connect.get(
-            'SELECT * FROM teams WHERE noc_name = ?',
             args)
     }
 
@@ -33,26 +19,16 @@ class Athletes extends require('../common/entities.js') {
             [name, yearOfBirth, sexEnum, JSON.stringify(params), team.id])
     }
 
-    findAmountOfMedalsBySeasonAndNOC(season, noc) {
-        return Promise.resolve({
-            max: 50,
-            column: [
-                "NOC", "Amount"
-            ],
-            data: [
-                ["USA", 50],
-                ["RUS", 30], 
-                ["USA", 5], 
-                ["RUS", 3], 
-                ["RUS", 2], 
-                ["RUS", 25], 
-                ["UGA", 10]
-            ]
-        });
-    }
-
-    findAmountOfMedalsBySeasonAndNOCAndMedal() {
-        
+    findAmountOfMedalsBySeasonAndNOCAndMedal(season, noc, medal) {
+        return this.connect.all(
+            `SELECT g.year, count(r.id) amount FROM results r 
+                JOIN athletes a ON a.id = r.athlete_id
+                JOIN teams t ON t.id = a.team_id
+                JOIN games g ON g.id = r.athlete_id 
+            WHERE g.season = ? AND t.noc_name = ?${medal !== undefined ? ' AND r.medal = ?' : ' '}
+            GROUP BY g.year, g.season
+            ORDER BY g.year`,
+            [season, noc, medal])
     }
 }
 

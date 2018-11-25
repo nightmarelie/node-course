@@ -1,10 +1,10 @@
 const Chart = require('./chart.js');
 
 class TopTeams extends Chart {
-    constructor(args, provider) {
-        super(args);
+    constructor(provider) {
+        super();
         this.provider = provider;
-        this.params = [];
+        this.params = {};
 
         console.log('I am TopTeams')
     }
@@ -13,8 +13,8 @@ class TopTeams extends Chart {
 TopTeams.chartName = 'top-teams';
 
 module.exports = {
-    chart: function (args, provider) {
-        return new TopTeams(args, provider);
+    chart: function (provider) {
+        return new TopTeams(provider);
     },
     TopTeams: TopTeams,
 }

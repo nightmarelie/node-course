@@ -25,7 +25,7 @@ class Connector {
                 if (err) {
                     rej(Connector.handlePromiseError(sql, err, params));
                 } else {
-                    res({rows, db: this.db})
+                    res(rows)
                 }
             })
         })

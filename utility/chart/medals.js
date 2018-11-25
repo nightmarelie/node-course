@@ -3,28 +3,67 @@ const Game = require("../../domain/olympic/game.js");
 const Chart = require('./chart.js');
 
 class Medals extends Chart {
-    constructor(args, provider) {
-        super(args);
+    constructor(provider) {
+        super();
         this.provider = provider;
-        this.params = [];
+        this.params = {};
+    }
 
-        console.log('I am Medals')
+    analyzeArgs(data) {
+        return new Promise((res, rej) => {
+            let params = this.prepareParams(data, Medals.chartName);
+
+            // try to fetch required params
+            for (const param of params) {
+                if (Medals.rule.medal[param] !== undefined) {
+                    this.params['medal'] = Medals.rule.medal[param];
+                } else if (Medals.rule.season[param] !== undefined) {
+                    this.params['season'] = Medals.rule.season[param];
+                } else {
+                    this.params['noc'] = param
+                }
+            }
+
+            try {
+                // analyze fetched params
+                if (this.analyzeParamNames(Object.keys(this.params), Medals.required, Medals.chartName)) {
+                    res(this);
+                }
+            } catch (e) {
+                rej(e);
+            }
+        });
     }
 
     draw() {
-        let season = 'Winter';
-        let noc = 'FRA';
+        const season = this.params.season;
+        const noc = this.params.noc;
+        const medal = this.params.medal;
 
-        this.getStatBySeasonAndNOC(season, noc)
-            .then(result => {
-                const first = 0;
-                const last = 1;
-                console.log(`${result.column[first]}${this.getIndent(Medals.indent)}${result.column[last]}`);
-                for (const item of result.data) {
-                    console.log(`${item[first]}${this.getIndent(Medals.indent)}${this.getSymbols(result.max, item[last])}`);
+        this.getStatBySeasonAndNOCAndMedal(season, noc, medal)
+        .then(rawResult => {
+            return new Promise((res, rej) => {
+                if (rawResult.length == 0) {
+                    rej(new Error("There is not results"));
                 }
-            })
-            .catch(e => console.log(e));
+
+                const column = Object.keys(rawResult[0]);
+                const max = Math.max(...rawResult.map(r => [r[column[1]]]).reduce((c, n) => c.concat(n), []));
+                const data = rawResult.map(r => [r[column[0]], r[column[1]]]);
+                
+                res({max, column, data});
+            });
+        })
+        .then(result => {
+            const first = 0;
+            const last = 1;
+
+            console.log(`${result.column[first]}${this.getIndent(Medals.indent)}${result.column[last]}`);
+            for (const item of result.data) {
+                console.log(`${item[first]}${this.getIndent(Medals.indent)}${this.getSymbols(result.max, item[last])}`);
+            }
+        })
+        .catch(e => console.log(e.message));
     }
 
     getStatBySeasonAndNOC(season, noc) {
@@ -43,10 +82,11 @@ Medals.rule = {
     season: Game.seasonEnum,
     noc: ''
 };
+Medals.required = ['noc', 'season'];
 
 module.exports = {
-    chart: function (args, provider) {
-        return new Medals(args, provider);
+    chart: function (provider) {
+        return new Medals(provider);
     },
     Medals: Medals,
 }
