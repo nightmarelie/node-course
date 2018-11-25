@@ -5,7 +5,9 @@ const athletes = require('../domain/athlete/athletes.js')(connect);
 const analyzer = new require("../utility/chart/analyzer.js")(athletes);
 
 //1. stats medals season[Summer|Winter] noc medal[Gold|Silver|Bronze]
-// EXAMPLE: stats medals summer UKR gold
+// EXAMPLE: stats medals summer SUR gold
+//2. stats top-teams season[Summer|Winter] year medal[Gold|Silver|Bronze]
+// EXAMPLE: stats top-teams summer 2004 silver
 (function (args) {
     analyzer.analyze(args)
         .then(chartName => analyzer.initChart(chartName))

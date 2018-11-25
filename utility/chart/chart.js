@@ -37,9 +37,41 @@ class Chart {
 
         return true;
     }
+
+    drawRow(column1, column2) {
+        console.log(`${column1}${this.getIndent(Chart.indent)}${column2}`);
+    }
+
+    drawBy(promise) {
+        const first = 0;
+        const last = 1;
+
+        promise
+        .then(rawResult => {
+            return new Promise((res, rej) => {
+                if (rawResult.length == 0) {
+                    rej(new Error("There is not results"));
+                }
+
+                const column = Object.keys(rawResult[first]);
+                const max = Math.max(...rawResult.map(r => [r[column[last]]]).reduce((c, n) => c.concat(n), []));
+                const data = rawResult.map(r => [r[column[first]], r[column[last]]]);
+                
+                res({max, column, data});
+            });
+        })
+        .then(result => {
+            this.drawRow(result.column[first], result.column[last]);
+            for (const item of result.data) {
+                this.drawRow(item[first], this.getSymbols(result.max, item[last]));
+            }
+        })
+        .catch(e => console.log(e.message));
+    }
 } 
 
 Chart.symbol = "█";
 Chart.maximum = 100;
+Chart.indent = 3;
 
 module.exports = Chart;
