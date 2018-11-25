@@ -38,10 +38,7 @@ class Olympics extends require('../common/entities.js') {
 
     createResult(medal, result) {
         const medalEnum = Result.medalEnum[medal] || 0;
-        const athleteId = result.athlete.id;
-        const gameId = result.game.id;
-        const sportId = result.sport.id;
-        const eventId = result.event.id;
+        const {athlete: {id: athleteId}, game: {id: gameId}, sport: {id: sportId}, event: {id: eventId}} = result;
 
         return this.connect.execute(
             'INSERT INTO results (athlete_id, game_id, sport_id, event_id, medal) VALUES (?, ?, ?, ?, ?)',

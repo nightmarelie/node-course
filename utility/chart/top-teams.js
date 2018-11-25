@@ -7,8 +7,6 @@ class TopTeams extends Chart {
         super();
         this.provider = provider;
         this.params = {};
-
-        console.log('I am TopTeams')
     }
 
     analyzeArgs(data) {

@@ -34,7 +34,6 @@ class Athletes extends require('../common/entities.js') {
     }
 
     findAmountOfMedalsBySeasonAndYearAndMedal(season, year, medal) {
-        console.log(season, year, medal)
         return this.connect.all(
             `SELECT t.noc_name NOC, COUNT(r.medal) Amount FROM results r 
                 JOIN athletes a ON a.id = r.athlete_id
