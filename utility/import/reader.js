@@ -11,7 +11,7 @@ module.exports = function (file, splitter, parser) {
     return new Promise(function (res, rej) {
         rd.on("line", function (line) {
             let arr = line.split(splitter);
-            let obj = new parser(arr).build();
+            let obj = parser.init(arr).build();
             
             if (obj !== undefined) {
                 result.push(obj);

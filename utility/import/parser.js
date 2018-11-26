@@ -1,10 +1,11 @@
 class Parser {
-    constructor(rowData) {
-        ++Parser.row;
-        this.init(rowData)
+    constructor(purgeRules = {}) {
+        this.purgeRules = purgeRules;
     }
 
     init(rowData) {
+        ++Parser.row;
+
         let result = rowData.map((el) => el.replace(/["]/gi, ''));
 
         if (Parser.row == 0) {
@@ -12,11 +13,13 @@ class Parser {
         } else {
             this.data = this.purgeByRule(result);
         }
+
+        return this;
     }
 
     purgeByRule(rowData) {
         return rowData.map((el, i) => {
-            let rule = Parser.purgeRules[Parser.column[i]];
+            let rule = this.purgeRules[Parser.column[i]];
             let result = el;
 
             if (rule !== undefined) {
@@ -40,9 +43,7 @@ class Parser {
 
 Parser.row = -1;
 Parser.column = [];
-Parser.purgeRules = {
-    'name': /\s\(.*?\)/gi,
-    'team': /-\d*$/,
-};
 
-module.exports = Parser;
+module.exports = function (purgeRules) {
+    return new Parser(purgeRules);
+}
