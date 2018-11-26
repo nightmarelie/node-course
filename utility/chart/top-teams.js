@@ -12,15 +12,15 @@ class TopTeams extends Chart {
     analyzeArgs(data) {
         return new Promise((res, rej) => {
             let params = this.prepareParams(data, TopTeams.chartName);
-
+            let year;
             // try to fetch required params
             for (const param of params) {
                 if (TopTeams.rule.medal[param] !== undefined) {
                     this.params['medal'] = TopTeams.rule.medal[param];
                 } else if (TopTeams.rule.season[param] !== undefined) {
                     this.params['season'] = TopTeams.rule.season[param];
-                } else {
-                    this.params['year'] = parseInt(param)
+                } else if (year = parseInt(param)) {
+                    this.params['year'] = year
                 }
             }
 

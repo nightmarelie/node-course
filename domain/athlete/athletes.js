@@ -43,7 +43,6 @@ class Athletes extends require('../common/entities.js') {
                 ${year !== undefined ? ' AND g.year = $_year' : ' '}
                 ${medal !== undefined ? ' AND r.medal = $_medal' : ' '}
             GROUP BY t.noc_name
-            HAVING Amount > 25
             ORDER BY amount DESC`,
             {
                 $_season: season,
