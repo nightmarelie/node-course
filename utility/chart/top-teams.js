@@ -6,39 +6,29 @@ class TopTeams extends Chart {
     constructor(provider) {
         super();
         this.provider = provider;
-        this.params = {};
     }
 
     analyzeArgs(data) {
-        return new Promise((res, rej) => {
-            let params = this.prepareParams(data, TopTeams.chartName);
+        return super.analyzeArgs(data, TopTeams, (params, rules) => {
+            const fetchedParams = [];
             let year;
             // try to fetch required params
             for (const param of params) {
-                if (TopTeams.rule.medal[param] !== undefined) {
-                    this.params['medal'] = TopTeams.rule.medal[param];
-                } else if (TopTeams.rule.season[param] !== undefined) {
-                    this.params['season'] = TopTeams.rule.season[param];
+                if (rules.medal[param] !== undefined) {
+                    fetchedParams['medal'] = rules.medal[param];
+                } else if (rules.season[param] !== undefined) {
+                    fetchedParams['season'] = rules.season[param];
                 } else if (year = parseInt(param)) {
-                    this.params['year'] = year
+                    fetchedParams['year'] = year
                 }
             }
 
-            try {
-                // analyze fetched params
-                if (this.analyzeParamNames(Object.keys(this.params), TopTeams.required, TopTeams.chartName)) {
-                    res(this);
-                }
-            } catch (e) {
-                rej(e);
-            }
+            return fetchedParams;
         });
     }
 
     draw() {
-        const season = this.params.season;
-        const year = this.params.year;
-        const medal = this.params.medal;
+        const {season, year, medal} = this.params;
 
         this.drawBy(this.provider.findAmountOfMedalsBySeasonAndYearAndMedal(season, year, medal));
     }

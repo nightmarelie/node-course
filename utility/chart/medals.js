@@ -6,39 +6,28 @@ class Medals extends Chart {
     constructor(provider) {
         super();
         this.provider = provider;
-        this.params = {};
     }
 
     analyzeArgs(data) {
-        return new Promise((res, rej) => {
-            let params = this.prepareParams(data, Medals.chartName);
-
+        return super.analyzeArgs(data, Medals, (params, rules) => {
+            const fetchedParams = [];
             // try to fetch required params
             for (const param of params) {
-                if (Medals.rule.medal[param] !== undefined) {
-                    this.params['medal'] = Medals.rule.medal[param];
-                } else if (Medals.rule.season[param] !== undefined) {
-                    this.params['season'] = Medals.rule.season[param];
+                if (rules.medal[param] !== undefined) {
+                    fetchedParams['medal'] = rules.medal[param];
+                } else if (rules.season[param] !== undefined) {
+                    fetchedParams['season'] = rules.season[param];
                 } else {
-                    this.params['noc'] = param
+                    fetchedParams['noc'] = param
                 }
             }
 
-            try {
-                // analyze fetched params
-                if (this.analyzeParamNames(Object.keys(this.params), Medals.required, Medals.chartName)) {
-                    res(this);
-                }
-            } catch (e) {
-                rej(e);
-            }
+            return fetchedParams;
         });
     }
 
     draw() {
-        const season = this.params.season;
-        const noc = this.params.noc;
-        const medal = this.params.medal;
+        const {season, noc, medal} = this.params;
 
         this.drawBy(this.provider.findAmountOfMedalsBySeasonAndNOCAndMedal(season, noc, medal));
     }

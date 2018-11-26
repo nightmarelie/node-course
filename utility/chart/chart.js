@@ -1,5 +1,6 @@
 class Chart {
     constructor() {
+        this.params = {};
     }
 
     draw() {
@@ -67,6 +68,22 @@ class Chart {
             }
         })
         .catch(e => console.log(e.message));
+    }
+
+    analyzeArgs(data, {chartName, required, rule: rules}, paramsFetch) {
+        return new Promise((res, rej) => {
+            this.params = paramsFetch(this.prepareParams(data, chartName), rules);
+
+            try {
+                // analyze fetched params
+                if (this.analyzeParamNames(Object.keys(this.params), required, chartName)) {
+                    res(this);
+                }
+            } catch (e) {
+                rej(e);
+            }
+        });
+
     }
 } 
 
