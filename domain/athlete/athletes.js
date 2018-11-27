@@ -7,7 +7,7 @@ class Athletes extends require('../common/entities.js') {
 
     createTeam(...args) {
         return this.connect.execute(
-            'INSERT OR IGNORE INTO teams (name, noc_name) VALUES (?, ?)',
+            'INSERT OR REPLACE INTO teams (name, noc_name) VALUES (?, ?)',
             args)
     }
 
@@ -21,16 +21,23 @@ class Athletes extends require('../common/entities.js') {
 
     findAmountOfMedalsBySeasonAndNOCAndMedal(season, noc, medal) {
         return this.connect.all(
-            `SELECT g.year Year, COUNT(r.medal) Amount FROM results r 
-                JOIN athletes a ON a.id = r.athlete_id
-                JOIN teams t ON t.id = a.team_id
-                JOIN games g ON g.id = r.athlete_id 
-            WHERE g.season = ? 
-                AND t.noc_name = ?
-                ${medal !== undefined ? ' AND r.medal = ?' : ' '}
-            GROUP BY g.year, g.season
+            `SELECT g.year, COUNT(noc_name) Amount from games g
+                LEFT JOIN (
+                    SELECT t.noc_name, g1.year FROM results r 
+                        JOIN athletes a ON a.id = r.athlete_id
+                        JOIN teams t ON t.id = a.team_id
+                        JOIN games g1 ON g1.id = r.game_id 
+                    WHERE t.noc_name = $_noc 
+                        AND g1.season = $_season
+                        AND r.medal ${medal !== undefined ? '= $_medal' : '<> 0'}
+                ) r1 ON g.year = r1.year
+            GROUP BY g.year
             ORDER BY g.year`,
-            [season, noc, medal])
+            {
+                $_season: season,
+                $_noc: noc,
+                $_medal: medal
+            })
     }
 
     findAmountOfMedalsBySeasonAndYearAndMedal(season, year, medal) {
@@ -38,10 +45,10 @@ class Athletes extends require('../common/entities.js') {
             `SELECT t.noc_name NOC, COUNT(r.medal) Amount FROM results r 
                 JOIN athletes a ON a.id = r.athlete_id
                 JOIN teams t ON t.id = a.team_id
-                JOIN games g ON g.id = r.athlete_id 
+                JOIN games g ON g.id = r.game_id 
             WHERE g.season = $_season
+                AND r.medal ${medal !== undefined ? '= $_medal' : '<> 0'}
                 ${year !== undefined ? ' AND g.year = $_year' : ' '}
-                ${medal !== undefined ? ' AND r.medal = $_medal' : ' '}
             GROUP BY t.noc_name
             ORDER BY amount DESC`,
             {

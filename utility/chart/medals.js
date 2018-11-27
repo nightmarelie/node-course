@@ -18,7 +18,7 @@ class Medals extends Chart {
                 } else if (rules.season[param] !== undefined) {
                     fetchedParams['season'] = rules.season[param];
                 } else {
-                    fetchedParams['noc'] = param
+                    fetchedParams['noc'] = param.toUpperCase();
                 }
             }
 
