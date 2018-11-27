@@ -69,7 +69,6 @@ class Connector {
                 console.log(result);
                 console.timeEnd("Insert time");
             });
-            
         })
         .all('COMMIT', () => {})
         .close()

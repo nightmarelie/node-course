@@ -6,6 +6,25 @@ class Importer {
         this.result = {};
     }
 
+    cachingSource(key, func, ...args) {
+        return new Promise((res, rej) => {
+            func.call(this, ...args)
+                .then(result => {
+                    Importer.cache.set(key, result);
+                    res(result);
+                })
+                .catch(err => {
+                    if (Importer.cache.has(key)) {
+                        res(Importer.cache.get(key));
+                    }
+
+                    if (err.code !== 'SQLITE_CONSTRAINT_UNIQUE') {
+                        rej(err);
+                    }
+                });
+        });
+    }
+
     importData(data) {
         this.connect.execTransaction(() => {
             const promises = [];
@@ -27,7 +46,7 @@ class Importer {
             const data = obj.data;
             const row = obj.row;
     
-            this.athletes.createTeam(data.team, data.noc)
+            this.cachingSource(data.noc, this.athletes.createTeam, data.team, data.noc)
                 .then(team => {
                     let year = parseInt(data.year);
                     let age = parseInt(data.age);
@@ -49,21 +68,26 @@ class Importer {
                     let cities = Importer.cityGames[key] || [];
                     cities.push(data.city)
                     Importer.cityGames[key] = cities.filter((value, index, self) => self.indexOf(value) === index);
-                    return this.olympics.createGame(data.year, data.season, Importer.cityGames[key].join())
+                    return this.olympics.createGame(data.year, data.season, Importer.cityGames[key].join());
                 })
                 .then(game => this.aggregate(row, ({game})))
-                .then(() => this.olympics.createSport(data.sport))
+                .then(() => this.cachingSource(data.sport, this.olympics.createSport, data.sport))
                 .then(sport => this.aggregate(row, ({sport})))
-                .then(() => this.olympics.createEvent(data.sport))
+                .then(() => this.cachingSource(data.sport, this.olympics.createEvent, data.sport))
                 .then(event => this.aggregate(row, ({event})))
                 .then(() => this.olympics.createResult(data.medal, this.result[row]))
-                .catch(error => console.error(error.message))
+                .catch(err => {
+                    if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {
+                        console.error(err.message);
+                    }
+                })
                 .then(() => res(`Row ${row} was inserted`))
         });
     }
 }
 
 Importer.cityGames = [];
+Importer.cache = new Map();
 
 module.exports = function (connect) {
     return new Importer(connect);

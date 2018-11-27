@@ -14,7 +14,7 @@ class Olympics extends require('../common/entities.js') {
         }
 
         return this.connect.execute(
-            'INSERT or REPLACE INTO games (year, season, city) VALUES (?, ?, ?)',
+            'INSERT INTO games (year, season, city) VALUES (?, ?, ?)',
             [year, seasonEnum, city])
     }
 
@@ -26,13 +26,13 @@ class Olympics extends require('../common/entities.js') {
 
     createSport(...args) {
         return this.connect.execute(
-            'INSERT OR IGNORE INTO sports (name) VALUES (?)',
+            'INSERT INTO sports (name) VALUES (?)',
             args)
     }
 
     createEvent(...args) {
         return this.connect.execute(
-            'INSERT OR IGNORE INTO events (name) VALUES (?)',
+            'INSERT INTO events (name) VALUES (?)',
             args)
     }
 

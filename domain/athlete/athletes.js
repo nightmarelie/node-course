@@ -7,7 +7,7 @@ class Athletes extends require('../common/entities.js') {
 
     createTeam(...args) {
         return this.connect.execute(
-            'INSERT OR REPLACE INTO teams (name, noc_name) VALUES (?, ?)',
+            'INSERT INTO teams (name, noc_name) VALUES (?, ?)',
             args)
     }
 
