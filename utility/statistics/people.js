@@ -43,15 +43,15 @@ class People {
         return entity;
     }
 
-    get numberOfmenAndWomen() {
+    get numberOfMenAndWomen() {
         const numMen = this.getCountBy(p => {
             let {data:{gender}} = p;
-            return gender == 'Female';
+            return gender == 'Male';
         });
 
         const numWomen = this.getCountBy(p => {
             let {data:{gender}} = p;
-            return gender == 'Male';
+            return gender == 'Female';
         });
 
         return {numMen, numWomen};
@@ -128,7 +128,7 @@ class People {
     }
 
     showStatsInfo() {
-        const {numMen, numWomen} = this.numberOfmenAndWomen;
+        const {numMen, numWomen} = this.numberOfMenAndWomen;
         const popularName = this.popularName;
         const popularCountry = this.popularCountry;
 
