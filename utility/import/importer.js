@@ -52,9 +52,13 @@ class Importer {
                         yearOfBirth = year - age;
                     }
     
-                    return this.athletes.createAthletes(data.name, yearOfBirth, data.sex, params, team);
+                    return this.cachingSource(data.id, this.athletes.createAthletes, data.id, data.name, yearOfBirth, data.sex, params, team);
                 })
                 .then(athlete => this.aggregate(row, ({athlete})))
+                .then(() => this.cachingSource(data.sport, this.olympics.createSport, data.sport))
+                .then(sport => this.aggregate(row, ({sport})))
+                .then(() => this.cachingSource(data.event, this.olympics.createEvent, data.event))
+                .then(event => this.aggregate(row, ({event})))
                 .then(() => {
                     const {year, season} = data
                     const key = `${year}${season}`;
@@ -75,10 +79,6 @@ class Importer {
                     return result;
                 })
                 .then(game => this.aggregate(row, ({game})))
-                .then(() => this.cachingSource(data.sport, this.olympics.createSport, data.sport))
-                .then(sport => this.aggregate(row, ({sport})))
-                .then(() => this.cachingSource(data.event, this.olympics.createEvent, data.event))
-                .then(event => this.aggregate(row, ({event})))
                 .then(() => this.olympics.createResult(data.medal, this.result[row]))
                 .catch(err => {
                     if (err.code == 'SQLITE_CONSTRAINT_UNIQUE') {

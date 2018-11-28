@@ -45,7 +45,7 @@ class Olympics extends require('../common/entities.js') {
     }
 
     createResult(medal, result) {
-        const medalEnum = Result.medalEnum[medal] || 0;
+        const medalEnum = Result.medalEnum[medal];
         const {athlete: {id: athleteId}, game: {id: gameId}, sport: {id: sportId}, event: {id: eventId}} = result;
 
         return this.connect.execute(

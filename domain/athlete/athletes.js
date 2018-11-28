@@ -11,12 +11,12 @@ class Athletes extends require('../common/entities.js') {
             args)
     }
 
-    createAthletes(name, yearOfBirth, sex, params, team) {
+    createAthletes(id, name, yearOfBirth, sex, params, team) {
         let sexEnum = Athlete.sexEnum[sex]
 
         return this.connect.execute(
-            'INSERT INTO athletes (full_name, year_of_birth, sex, params, team_id) VALUES (?, ?, ?, ?, ?)',
-            [name, yearOfBirth, sexEnum, JSON.stringify(params), team.id])
+            'INSERT INTO athletes (id, full_name, year_of_birth, sex, params, team_id) VALUES (?, ?, ?, ?, ?, ?)',
+            [id, name, yearOfBirth, sexEnum, JSON.stringify(params), team.id])
     }
 
     findAmountOfMedalsBySeasonAndNOCAndMedal(season, noc, medal) {
