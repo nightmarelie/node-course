@@ -62,13 +62,24 @@ class Connector {
     }
 
     execTransaction(execution) {
-        this.db.all('BEGIN', () => {
+        this.db.all('BEGIN TRANSACTION', () => {
+            // prepare tables
+            this.db.run('DELETE FROM teams')
+                .run('DELETE FROM sqlite_sequence WHERE name="teams"')
+                .run('DELETE FROM athletes')
+                .run('DELETE FROM sqlite_sequence WHERE name="athletes"')
+                .run('DELETE FROM games')
+                .run('DELETE FROM sqlite_sequence WHERE name="games"')
+                .run('DELETE FROM sports')
+                .run('DELETE FROM sqlite_sequence WHERE name="sports"')
+                .run('DELETE FROM events')
+                .run('DELETE FROM sqlite_sequence WHERE name="events"')
+                .run('DELETE FROM results')
+                .run('DELETE FROM sqlite_sequence WHERE name="results"');
+
             console.time("Insert time");
             Promise.all(execution())
-            .then(result => {
-                console.log(result);
-                console.timeEnd("Insert time");
-            });
+                .then(() => console.timeEnd("Insert time"));
         })
         .all('COMMIT', () => {})
         .close()

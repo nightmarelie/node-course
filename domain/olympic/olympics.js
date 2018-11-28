@@ -18,6 +18,14 @@ class Olympics extends require('../common/entities.js') {
             [year, seasonEnum, city])
     }
 
+    updateGame(city, year, season) {
+        const seasonEnum = Game.seasonEnum[season];
+
+        return this.connect.execute(
+            'UPDATE games SET city = ? WHERE year || season = ?',
+            [city, `${year}${seasonEnum}`])
+    }
+
     findGameByYearAndSeason(...args) {
         return this.connect.get(
             'SELECT * FROM games WHERE year = ? AND season = ?',

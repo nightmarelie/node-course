@@ -7,22 +7,14 @@ class Importer {
     }
 
     cachingSource(key, func, ...args) {
-        return new Promise((res, rej) => {
-            func.call(this, ...args)
-                .then(result => {
-                    Importer.cache.set(key, result);
-                    res(result);
-                })
-                .catch(err => {
-                    if (Importer.cache.has(key)) {
-                        res(Importer.cache.get(key));
-                    }
+        if (Importer.cache.has(key)) {
+            return Importer.cache.get(key);
+        }
 
-                    if (err.code !== 'SQLITE_CONSTRAINT_UNIQUE') {
-                        rej(err);
-                    }
-                });
-        });
+        let result = func.call(this, ...args)
+        Importer.cache.set(key, result);
+
+        return result;
     }
 
     importData(data) {
@@ -64,16 +56,28 @@ class Importer {
                 })
                 .then(athlete => this.aggregate(row, ({athlete})))
                 .then(() => {
-                    let key = `${data.year}${data.season}`;
-                    let cities = Importer.cityGames[key] || [];
+                    const {year, season} = data
+                    const key = `${year}${season}`;
+                    const cities = Importer.cityGames[key] || [];
                     cities.push(data.city)
                     Importer.cityGames[key] = cities.filter((value, index, self) => self.indexOf(value) === index);
-                    return this.olympics.createGame(data.year, data.season, Importer.cityGames[key].join());
+
+                    const citiesString = Importer.cityGames[key].join();
+                    let result;
+                    if (Importer.cache.has(key)) {
+                        this.olympics.updateGame(citiesString, year, season);
+                        result = Importer.cache.get(key);
+                    } else {
+                        result = this.olympics.createGame(year, season, citiesString);
+                        Importer.cache.set(key, result);
+                    }
+    
+                    return result;
                 })
                 .then(game => this.aggregate(row, ({game})))
                 .then(() => this.cachingSource(data.sport, this.olympics.createSport, data.sport))
                 .then(sport => this.aggregate(row, ({sport})))
-                .then(() => this.cachingSource(data.sport, this.olympics.createEvent, data.sport))
+                .then(() => this.cachingSource(data.event, this.olympics.createEvent, data.event))
                 .then(event => this.aggregate(row, ({event})))
                 .then(() => this.olympics.createResult(data.medal, this.result[row]))
                 .catch(err => {
