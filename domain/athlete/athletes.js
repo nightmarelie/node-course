@@ -21,15 +21,16 @@ class Athletes extends require('../common/entities.js') {
 
     findAmountOfMedalsBySeasonAndNOCAndMedal(season, noc, medal) {
         return this.connect.all(
-            `SELECT g.year, COUNT(noc_name) Amount from games g
+            `SELECT g.year, COALESCE(r1.count, 0) Amount FROM games g
                 LEFT JOIN (
-                    SELECT t.noc_name, g1.year FROM results r 
+                    SELECT COUNT(t.noc_name) count, g1.year FROM results r 
                         JOIN athletes a ON a.id = r.athlete_id
                         JOIN teams t ON t.id = a.team_id
                         JOIN games g1 ON g1.id = r.game_id 
                     WHERE t.noc_name = $_noc 
                         AND g1.season = $_season
                         AND r.medal ${medal !== undefined ? '= $_medal' : '<> 0'}
+                    GROUP BY g1.year
                 ) r1 ON g.year = r1.year
             GROUP BY g.year
             ORDER BY g.year`,
