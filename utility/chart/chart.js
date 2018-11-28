@@ -64,7 +64,7 @@ class Chart {
         .then(result => {
             this.drawRow(result.column[first], result.column[last]);
             for (const item of result.data) {
-                this.drawRow(item[first], this.getSymbols(result.max, item[last]));
+                this.drawRow(item[first], `${this.getSymbols(result.max, item[last])} ${item[last]}`);
             }
         })
         .catch(e => console.log(e.message));
